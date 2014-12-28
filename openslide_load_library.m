@@ -44,7 +44,7 @@ elseif ispc
 else
     libname = 'libopenslide.so.0';
 end
-loadlibrary(libname,'openslide-wrapper.h','alias','openslidelib');
+loadlibrary(libname,'openslide.h','alias','openslidelib');
 
 % Check success of load
 success = libisloaded('openslidelib');

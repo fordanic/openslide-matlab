@@ -1,7 +1,7 @@
-function [im] = openslide_read_associated_image(openslidePointer,imageName)
+function [ARGB] = openslide_read_associated_image(openslidePointer,imageName)
 % OPENSLIDE_READ_ASSOCIATED_IMAGE Reads an associated image
 %
-% [im] = openslide_read_associated_image(openslidePointer,imageName)
+% [ARGB] = openslide_read_associated_image(openslidePointer,imageName)
 %
 % INPUT ARGUMENTS
 % openslidePointer          - Pointer to whole-slide image to read from
@@ -11,7 +11,7 @@ function [im] = openslide_read_associated_image(openslidePointer,imageName)
 % N/A
 %
 % OUTPUT
-% im                        - Read image
+% ARGB                      - Read ARGB image
 
 % Copyright (c) 2013 Daniel Forsberg
 % danne.forsberg@outlook.com
