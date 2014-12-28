@@ -13,7 +13,7 @@ function openslide_load_library()
 % N/A
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -32,20 +32,27 @@ function openslide_load_library()
 
 % Check if library is already loaded
 if libisloaded('openslidelib');
-    fprintf('Openslide library is already loaded\n')
+    disp('Openslide library is already loaded')
     return
 end
 
 % Load library
-loadlibrary('libopenslide-0.dll','openslide.h','alias','openslidelib')
+if ismac
+    libname = 'libopenslide.0.dylib';
+elseif ispc
+    libname = 'libopenslide-0.dll';
+else
+    libname = 'libopenslide.so.0';
+end
+loadlibrary(libname,'openslide-wrapper.h','alias','openslidelib');
 
 % Check success of load
 success = libisloaded('openslidelib');
 
 % Notify user of success
 if success
-    fprintf('Openslide library has been loaded\n')
+    disp('Openslide library has been loaded')
 else
-    error('openslide:openslide_read_region',...
+    error('openslide:openslide_load_library',...
         'Failure to load openslide library\n')
 end

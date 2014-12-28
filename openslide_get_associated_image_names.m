@@ -15,7 +15,7 @@ function [associatedImages] = openslide_get_associated_image_names(...
 % associatedImages          - Names of associated images
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -32,15 +32,23 @@ function [associatedImages] = openslide_get_associated_image_names(...
 
 %%
 
-% Check if openslide library is opened
+% Check if library for openslide is already loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
 % Read list of associated image names
 [stringArray, ~] = calllib('openslidelib','openslide_get_associated_image_names',...
     openslidePointer);
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_get_associated_image_names',errorMessage)
+end
 
 % Parse the array
 ptrInd = stringArray;

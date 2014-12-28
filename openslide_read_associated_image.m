@@ -4,7 +4,7 @@ function [im] = openslide_read_associated_image(openslidePointer,imageName)
 % [im] = openslide_read_associated_image(openslidePointer,imageName)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to slide to read from
+% openslidePointer          - Pointer to whole-slide image to read from
 % imageName                 - Associated image to read
 %
 % OPTIONAL INPUT ARGUMENTS
@@ -14,7 +14,7 @@ function [im] = openslide_read_associated_image(openslidePointer,imageName)
 % im                        - Read image
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -30,10 +30,11 @@ function [im] = openslide_read_associated_image(openslidePointer,imageName)
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %%
-% Check if openslide library is opened
+
+% Check if library for openslide is already loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
 % Read size of associated image
@@ -48,11 +49,22 @@ data = uint32(zeros(width*height,1));
 region = libpointer('uint32Ptr',data);
 [~, string, region] = calllib('openslidelib',...
     'openslide_read_associated_image',openslidePointer,imageName,region);
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_read_associated_image',errorMessage)
+end
+
+% Cast and reformat read data
 RGBA = typecast(region,'uint8');
-im = uint8(zeros(width,height,3));
-im(:,:,1) = reshape(RGBA(3:4:end),width,height);
-im(:,:,2) = reshape(RGBA(2:4:end),width,height);
-im(:,:,3) = reshape(RGBA(1:4:end),width,height);
+ARGB = uint8(zeros(width,height,4));
+ARGB(:,:,1) = reshape(RGBA(4:4:end),width,height);
+ARGB(:,:,2) = reshape(RGBA(3:4:end),width,height);
+ARGB(:,:,3) = reshape(RGBA(2:4:end),width,height);
+ARGB(:,:,4) = reshape(RGBA(1:4:end),width,height);
 
 % Permute image to make sure it is according to standard MATLAB format
-im = permute(im,[2 1 3]);
+ARGB = permute(ARGB,[2 1 3]);

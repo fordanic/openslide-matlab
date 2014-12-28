@@ -5,7 +5,7 @@ function [propertyValue] = ...
 % [propertyValue] = openslide_get_property_value(openslidePointer, propertyName)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to the slide to read properties from
+% openslidePointer          - Pointer to the whole-slide image to read properties from
 % propertyName              - Property to retrieve value for
 %
 % OPTIONAL INPUT ARGUMENTS
@@ -17,7 +17,7 @@ function [propertyValue] = ...
 %                             before it can be used.
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -34,12 +34,20 @@ function [propertyValue] = ...
 
 %%
 
-% Check if openslide library is opened
+% Make sure library for openslide is loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
 % Read property value
 [propertyValue, ~] = calllib('openslidelib','openslide_get_property_value',...
     openslidePointer,propertyName);
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_get_property_value',errorMessage)
+end

@@ -13,7 +13,7 @@ function openslide_unload_library()
 % N/A
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ function openslide_unload_library()
 
 % Check if library is already loaded
 if ~libisloaded('openslidelib');
-    fprintf('Openslide library is not loaded\n')
+    disp('Openslide library is not loaded')
     return
 end
 
@@ -41,8 +41,8 @@ unloadlibrary('openslidelib')
 
 % Check success of unload
 if libisloaded('openslidelib');
-    error('openslide:openslide_read_region',...
+    error('openslide:openslide_unload_library',...
         'Failure to unload openslide library\n')
 else
-    fprintf('Openslide library has been unloaded\n')
+    disp('Openslide library has been unloaded')
 end

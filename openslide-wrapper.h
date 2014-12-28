@@ -1,0 +1,5 @@
+#ifndef MATLAB_OPENSLIDE_WRAPPER_H
+#define MATLAB_OPENSLIDE_WRAPPER_H
+#define OPENSLIDE_SIMPLIFY_HEADERS
+#include <openslide.h>
+#endif

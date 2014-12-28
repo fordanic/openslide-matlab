@@ -1,19 +1,19 @@
 function openslidePointer = openslide_open(slideName)
-% OPENSLIDE_OPEN Opens a slide for interaction
+% OPENSLIDE_OPEN Opens a whole-slide image for interaction
 %
 % openslidePointer = openslide_open(slideName)
 %
 % INPUT ARGUMENTS
-% slideName         - Full file name of slide to interact with
+% slideName         - Full file name of whole-slide image to interact with
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% openslidePointer  - Pointer to slide to interact with
+% openslidePointer  - Pointer to whole-slide image to interact with
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -32,18 +32,23 @@ function openslidePointer = openslide_open(slideName)
 
 % Check if library for openslide is already loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
-% Check if slide can be opened
-canOpenSlide = calllib('openslidelib','openslide_can_open',slideName);
-
-% Notify user if unable to open slide
-if ~canOpenSlide
-    errorMessage = ['Unable to open the specified slide: ',slideName,'\n'];
-    error('openslide:openslide_read_region',errorMessage)
-end
-
-% Get pointer to slide
+% Get pointer to whole-slide image
 openslidePointer = calllib('openslidelib','openslide_open',slideName);
+
+% Check validity of returned pointer
+if isempty(openslidePointer)
+    errorMessage = ['Unable to open the specified slide: ',slideName,'\n'];
+    error('openslide:openslide_open',errorMessage)
+end
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_open',errorMessage)
+end

@@ -1,13 +1,15 @@
-function [im] = openslide_read_region(openslidePointer,xPos,yPos,width,height,varargin)
+function [ARGB] = openslide_read_region(openslidePointer,xPos,yPos,width,height,varargin)
 % OPENSLIDE_READ_REGION Reads a region according to specified coordinates and with specified size
 %
-% [im] = openslide_read_region(openslidePointer,xPos,yPos,width,height)
+% [ARGB] = openslide_read_region(openslidePointer,xPos,yPos,width,height)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to slide to read from, obtained from
+% openslidePointer          - Pointer to whole-slide image to read from, obtained from
 %                             OPENSLIDE_OPEN
-% xPos                      - Pixel position, with first position as 0
-% yPos                      - Pixel position, with first position as 0
+% xPos                      - Pixel position, with first position as 0 and in
+%                             the specified level reference frame
+% yPos                      - Pixel position, with first position as 0 and in
+%                             the specified level reference frame
 % width                     - Widht of region to read in pixels
 % height                    - Height of region to read in pixels
 %
@@ -16,10 +18,10 @@ function [im] = openslide_read_region(openslidePointer,xPos,yPos,width,height,va
 %                             level
 %
 % OUTPUT
-% im                        - Read image
+% ARGB                      - Read ARGB image
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -42,11 +44,11 @@ for k=1:2:length(varargin)
     eval([varargin{k},'=varargin{',int2str(k+1),'};']);
 end
 
-
-% Check if openslide library is opened
+%%
+% Make sure library for openslide is loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
 % Check that specified level is available
@@ -54,7 +56,7 @@ numberOfLevels = calllib('openslidelib','openslide_get_level_count',...
     openslidePointer);
 if level >= numberOfLevels
     error('openslide:openslide_read_region',...
-        'Specified level is not available in the current slide\n')
+        'Specified level is not available in the current whole-slide image\n')
 end
 
 % Check that it is possible to read the specified region
@@ -67,9 +69,17 @@ if xPos + width - 1 >= widthLevel
     error('openslide:openslide_read_region',...
         'Specified x-pos and width yields an invalid end position\n')
 end
+if xPos < 0
+    error('openslide:openslide_read_region',...
+        'Specified x-pos yields an invalid start position\n')
+end
 if yPos + height - 1 >= heightLevel
     error('openslide:openslide_read_region',...
         'Specified y-pos and height yields an invalid end position\n')
+end
+if yPos < 0
+    error('openslide:openslide_read_region',...
+        'Specified y-pos yields an invalid start position\n')
 end
 
 % Adjust position according to downsampling factor of desired level
@@ -82,11 +92,23 @@ yPos = yPos * downsamplingFactor;
 data = uint32(zeros(width*height,1));
 region = libpointer('uint32Ptr',data);
 [~, region] = calllib('openslidelib','openslide_read_region',openslidePointer,region,int64(xPos),int64(yPos),int32(level),int64(width),int64(height));
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_read_region',...
+        errorMessage)
+end
+
+% Cast and reformat read data
 RGBA = typecast(region,'uint8');
-im = uint8(zeros(width,height,3));
-im(:,:,1) = reshape(RGBA(3:4:end),width,height);
-im(:,:,2) = reshape(RGBA(2:4:end),width,height);
-im(:,:,3) = reshape(RGBA(1:4:end),width,height);
+ARGB = uint8(zeros(width,height,4));
+ARGB(:,:,1) = reshape(RGBA(4:4:end),width,height);
+ARGB(:,:,2) = reshape(RGBA(3:4:end),width,height);
+ARGB(:,:,3) = reshape(RGBA(2:4:end),width,height);
+ARGB(:,:,4) = reshape(RGBA(1:4:end),width,height);
 
 % Permute image to make sure it is according to standard MATLAB format
-im = permute(im,[2 1 3]);
+ARGB = permute(ARGB,[2 1 3]);

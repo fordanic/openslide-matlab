@@ -1,16 +1,18 @@
-function openslide_close(openslidePointer)
-% OPENSLIDE_CLOSE Closes the currently open whole-slide image
+function [errorMessage] = openslide_get_error(openslidePointer)
+% OPENSLIDE_GET_ERROR Retrieves an error message related to current slide
+%
+% [errorMessage] = openslide_get_error(openslidePointer)
 %
 % INPUT ARGUMENTS
-% openslidePointer      - Pointer to the whole-slide image to close
+% openslidePointer          - Pointer to slide to retrieve error for
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% N/A
+% errorMessage              - Retrieved error message, NULL if none is available
 
-% Copyright (c) 2013 Daniel Forsberg
+% Copyright (c) 2014 Daniel Forsberg
 % danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
@@ -27,20 +29,11 @@ function openslide_close(openslidePointer)
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %%
-
-% Make sure library for openslide is loaded
+% Check if openslide library is opened
 if ~libisloaded('openslidelib')
-    warning('OpenSlide library has not been loaded, attempting to load')
-    openslide_load_library();
+    error('openslide:openslide_read_region',...
+        'Make sure to load the openslide library first\n')
 end
 
-% Close whole-slide image
-calllib('openslidelib','openslide_close',openslidePointer);
-
-% Check for errors
-[errorMessage] = openslide_get_error(openslidePointer);
-
-% Terminate if an error was returned
-if ~isempty(errorMessage)
-    error('openslide:openslide_close',errorMessage)
-end
+% Retrieve error message associated with current slide
+[errorMessage] = calllib('openslidelib','openslide_get_error',openslidePointer);

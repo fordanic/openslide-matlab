@@ -1,14 +1,14 @@
 function [mppX, mppY, width, height, numberOfLevels, ...
     downsampleFactors, objectivePower] = ...
     openslide_get_slide_properties(openslidePointer)
-% OPENSLIDE_GET_SLIDE_PROPERTIES Reads some basics properties of the slide
+% OPENSLIDE_GET_SLIDE_PROPERTIES Reads some basics properties of the whole-slide image
 %
 % [mppX, mppY, width, height, numberOfLevels, ...
 %     downsampleFactors, objectivePower] = ...
 %     openslide_get_slide_properties(openslidePointer)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to the slide to read properties from
+% openslidePointer          - Pointer to the whole-slide image to read properties from
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
@@ -23,7 +23,7 @@ function [mppX, mppY, width, height, numberOfLevels, ...
 % objectivePower            - Magnification factor for level 0
 
 % Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -40,30 +40,66 @@ function [mppX, mppY, width, height, numberOfLevels, ...
 
 %%
 
-% Check if openslide library is opened
+% Check if library for openslide is already loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
+%% mpp
 % Read microns per pixel along x-axis
 mppX = str2double(calllib('openslidelib','openslide_get_property_value',...
     openslidePointer,'openslide.mpp-x'));
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_open',errorMessage)
+end
 
 % Read microns per pixel along y-axis
 mppY = str2double(calllib('openslidelib','openslide_get_property_value',...
     openslidePointer,'openslide.mpp-y'));
 
-% Read size of slide
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_open',errorMessage)
+end
+
+%% size
+% Read size of whole-slide image
 width = 0;
 height = 0;
 [~, width, height] = calllib('openslidelib',...
     'openslide_get_level0_dimensions',openslidePointer,width,height);
 
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_open',errorMessage)
+end
+
+%% number of zoom levels
 % Read number of zoom levels
 numberOfLevels = calllib('openslidelib','openslide_get_level_count',...
     openslidePointer);
 
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_open',errorMessage)
+end
+
+%% downsample factors
 % Read downsample factors for each available zoom level
 downsampleFactors = zeros(numberOfLevels,1);
 for level = 0 : numberOfLevels - 1
@@ -71,7 +107,24 @@ for level = 0 : numberOfLevels - 1
         'openslide_get_level_downsample',openslidePointer,level);
 end
 
-% Read zoom level of level 0
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_open',errorMessage)
+end
+
+%% objective power
+% Read objective power of level 0
 objectivePower = str2double(calllib('openslidelib',...
     'openslide_get_property_value',...
     openslidePointer,'openslide.objective-power'));
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_open',errorMessage)
+end

@@ -1,19 +1,19 @@
-function [comment] = openslide_get_comment(openslidePointer)
-% OPENSLIDE_GET_COMMENT Returns comment of the current slide
+function [vendor] = openslide_detect_vendor(slideName)
+% OPENSLIDE_DETECT_VENDOR Determine vendor of the whole-slide image
 %
-% [comment] = openslide_get_comment(openslidePointer)
+% [vendor] = openslide_detect_vendor(openslidePointer)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to the slide to read comment from
+% slideName         - Full file name of whole-slide image to interact with
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% comment                   - Comment of the current slide
+% vendor            - Vendor of the whole-slide image
 
-% Copyright (c) 2013 Daniel Forsberg
-% daniel.forsberg@liu.se
+% Copyright (c) 2014 Daniel Forsberg
+% danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -29,13 +29,11 @@ function [comment] = openslide_get_comment(openslidePointer)
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %%
-
-% Check if openslide library is opened
+% Check if openslide library is loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
-% Read comment
-[comment] = calllib('openslidelib','openslide_get_comment',...
-    openslidePointer);
+% Call detect vendor
+[vendor] = calllib('openslidelib','openslide_detect_vendor',slideName);
