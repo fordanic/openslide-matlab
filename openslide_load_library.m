@@ -36,15 +36,44 @@ if libisloaded('openslidelib');
     return
 end
 
-% Load library
+% Set name of library, platform dependent
 if ismac
-    libname = 'libopenslide.0.dylib';
+    libName = 'libopenslide.0.dylib';
 elseif ispc
-    libname = 'libopenslide-0.dll';
+    libName = 'libopenslide-0.dll';
 else
-    libname = 'libopenslide.so.0';
+    libName = 'libopenslide.so.0';
 end
-loadlibrary(libname,'openslide.h','alias','openslidelib');
+if isempty(which(libName))
+    error('openslide:openslide_load_library',...
+        'OpenSlide library not available on MATLAB path\n')
+end
+
+% Get location of openslide.h
+openslideHeaderLocation = which('openslide.h');
+if isempty(openslideHeaderLocation)
+    error('openslide:openslide_load_library',...
+        'OpenSlide include header not available on MATLAB path\n')
+end
+if ispc
+    % Need to add \ to openslideHeaderLocation when writing to file
+    openslideHeaderLocation = strrep(openslideHeaderLocation,'\','\\');
+end
+
+% Copy openslide-wrapper.h to openslide-wrapper-local.h and add location of
+% openslide.h
+[pathStr,~,~] = fileparts(mfilename('fullpath'));
+fid = fopen([pathStr,filesep,'openslide-wrapper.h'],'w');
+fprintf(fid,'#ifndef MATLAB_OPENSLIDE_WRAPPER_H\n');
+fprintf(fid,'#define MATLAB_OPENSLIDE_WRAPPER_H\n');
+fprintf(fid,'#define OPENSLIDE_SIMPLIFY_HEADERS\n');
+fprintf(fid,['#include "',openslideHeaderLocation,'"\n']);
+fprintf(fid,'#endif\n');
+fclose(fid);
+
+% Load library
+loadlibrary(libName,'openslide-wrapper.h','alias','openslidelib',...
+    'addheader','openslide.h');
 
 % Check success of load
 success = libisloaded('openslidelib');

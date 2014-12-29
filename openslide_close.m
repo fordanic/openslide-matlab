@@ -37,10 +37,4 @@ end
 % Close whole-slide image
 calllib('openslidelib','openslide_close',openslidePointer);
 
-% Check for errors
-[errorMessage] = openslide_get_error(openslidePointer);
-
-% Terminate if an error was returned
-if ~isempty(errorMessage)
-    error('openslide:openslide_close',errorMessage)
-end
+disp('Remember to clear the pointer to the openslide object, since it is not valid anymore')

@@ -2,7 +2,8 @@ openslide-matlab
 ================
 
 A MATLAB library providing bindings to the C library OpenSlide 
-(https://github.com/openslide/openslide) used for reading whole-slide images.
+(https://github.com/openslide/openslide) used for reading 
+whole-slide images.
 
 Copyright (c) 2014 Daniel Forsberg
 danne.forsberg@outlook.com
@@ -26,10 +27,18 @@ which is used to read image data from digital whole-slide images.
 
 INSTALLATION
 ================
-Add the folder and any sub folders to the MATLAB path. Also download source code or binaries
-for OpenSlide from http://openslide.org/download/. If downloading the source, make sure to 
-follow instructions provided by OpenSlide for compiling the binaries. Remember to also add the folders
-of these libraries and the include files to the MATLAB path.
+Add the folder and any sub folders to the MATLAB path. Also download 
+source code or binaries for OpenSlide from http://openslide.org/download/. 
+If downloading the source, make sure to follow instructions provided by 
+OpenSlide for compiling the binaries. Remember to also add the folders
+of these libraries and the include files to the MATLAB path. 
+
+If using release 3.4 or older, make sure to edit the openslide.h so that 
+#include <openslide-features.h> reads #include "openslide-features.h" instead.
+
+When running openslide_load_library a wrapper header file will be 
+created in the openslide MATLAB repository. This file is needed 
+as wrapper to avoid some issues with gcc function attributes.
 
 LICENSING
 ================
