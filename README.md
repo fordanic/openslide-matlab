@@ -33,8 +33,9 @@ If downloading the source, make sure to follow instructions provided by
 OpenSlide for compiling the binaries. Remember to also add the folders
 of these libraries and the include files to the MATLAB path. 
 
-If using release 3.4 or older, make sure to edit the openslide.h so that 
-#include <openslide-features.h> reads #include "openslide-features.h" instead.
+If using release 3.4 or older, make sure to edit the openslide.h 
+so that '#include <openslide-features.h>' reads '#include "openslide-features.h"' 
+instead.
 
 When running openslide_load_library a wrapper header file will be 
 created in the openslide MATLAB repository. This file is needed 
