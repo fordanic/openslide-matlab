@@ -1,11 +1,11 @@
 function [propertyValue] = ...
     openslide_get_property_value(openslidePointer, propertyName)
-% OPENSLIDE_GET_PROPERTY_VALUE Returns the value of a single property
+% OPENSLIDE_GET_PROPERTY_VALUE Returns the value of a single property from the openslide object
 %
 % [propertyValue] = openslide_get_property_value(openslidePointer, propertyName)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to the whole-slide image to read properties from
+% openslidePointer          - Pointer to the openslide object to read properties from
 % propertyName              - Property to retrieve value for
 %
 % OPTIONAL INPUT ARGUMENTS
@@ -38,6 +38,24 @@ function [propertyValue] = ...
 if ~libisloaded('openslidelib')
     warning('OpenSlide library has not been loaded, attempting to load')
     openslide_load_library();
+end
+
+% Check property name
+if iscell(propertyName)
+    warning(['Provided propertyName argument is a cell object. ',...
+        'Attempts to use data from the first cell as propertyName argument']);
+    propertyName = propertyName{1};
+end
+if ~ischar(propertyName)
+    error('openslide:openslide_get_property_value',...
+        'Provided propertyName argument is not a valid char array.\n')
+end
+
+% See if provided property name is in the list of available properties
+propertyNames = openslide_get_property_names(openslidePointer);
+if sum(strcmpi(propertyName,propertyNames)) == 0
+    error('openslide:openslide_get_property_value',...
+        'Provided propertyName argument is not a valid property name for this openslide object.\n')
 end
 
 % Read property value

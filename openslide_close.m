@@ -2,7 +2,7 @@ function openslide_close(openslidePointer)
 % OPENSLIDE_CLOSE Closes the currently open whole-slide image
 %
 % INPUT ARGUMENTS
-% openslidePointer      - Pointer to the whole-slide image to close
+% openslidePointer      - Pointer to the openslide object to close
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A

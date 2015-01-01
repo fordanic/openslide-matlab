@@ -4,13 +4,15 @@ function openslidePointer = openslide_open(slideName)
 % openslidePointer = openslide_open(slideName)
 %
 % INPUT ARGUMENTS
-% slideName         - Full file name of whole-slide image to interact with
+% slideName         - Full file name of whole-slide image to interact with, i.e.
+%                     including path and file extension
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% openslidePointer  - Pointer to whole-slide image to interact with
+% openslidePointer  - Pointer to whole-slide image to interact with, to be used
+%                     as input argument in other openslide funcions
 
 % Copyright (c) 2013 Daniel Forsberg
 % danne.forsberg@outlook.com

@@ -5,14 +5,14 @@ function [associatedImages] = openslide_get_associated_image_names(...
 % [associatedImages] = openslide_get_associated_image_names(openslidePointer)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to the slide to read associated image
-%                             names from
+% openslidePointer          - Pointer to the openslide object to read associated 
+%                             image names from
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% associatedImages          - Names of associated images
+% associatedImages          - Cell list with names of associated images
 
 % Copyright (c) 2013 Daniel Forsberg
 % danne.forsberg@outlook.com

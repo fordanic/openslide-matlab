@@ -1,18 +1,17 @@
 function [propertyNames] = ...
     openslide_get_property_names(openslidePointer)
-% OPENSLIDE_GET_PROPERTY_NAMES Returns a list of all available properties
+% OPENSLIDE_GET_PROPERTY_NAMES Returns a list of all available property names for current openslide objects
 %
 % [propertyNames] = openslide_get_property_names(openslidePointer)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to the whole-slide image to read properties from
+% openslidePointer          - Pointer to the openslide object to read properties from
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% propertyNames             - Returns a cell list with all avaiable
-%                             properties
+% propertyNames             - Cell list with all avaiable property names
 
 % Copyright (c) 2013 Daniel Forsberg
 % danne.forsberg@outlook.com

@@ -1,10 +1,11 @@
 function [vendor] = openslide_detect_vendor(slideName)
 % OPENSLIDE_DETECT_VENDOR Determine vendor of the whole-slide image
 %
-% [vendor] = openslide_detect_vendor(openslidePointer)
+% [vendor] = openslide_detect_vendor(slideName)
 %
 % INPUT ARGUMENTS
-% slideName         - Full file name of whole-slide image to interact with
+% slideName         - Full file name of whole-slide image to interact with, i.e.
+%                     including full path and file extension
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A

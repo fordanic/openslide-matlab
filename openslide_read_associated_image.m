@@ -4,8 +4,8 @@ function [ARGB] = openslide_read_associated_image(openslidePointer,imageName)
 % [ARGB] = openslide_read_associated_image(openslidePointer,imageName)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to whole-slide image to read from
-% imageName                 - Associated image to read
+% openslidePointer          - Pointer to openslide object to read from
+% imageName                 - Associated image name to read
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
@@ -35,6 +35,24 @@ function [ARGB] = openslide_read_associated_image(openslidePointer,imageName)
 if ~libisloaded('openslidelib')
     warning('OpenSlide library has not been loaded, attempting to load')
     openslide_load_library();
+end
+
+% Check image name
+if iscell(imageName)
+    warning(['Provided imageName argument is a cell object. ',...
+        'Attempts to use data from the first cell as imageName argument']);
+    imageName = imageName{1};
+end
+if ~ischar(imageName)
+    error('openslide:openslide_read_associated_image',...
+        'Provided imageName argument is not a valid char array.\n')
+end
+
+% See if provided image name is in the list of available associated images
+imageNames = openslide_get_associated_image_names(openslidePointer);
+if sum(strcmpi(imageName,imageNames)) == 0
+    error('openslide:openslide_read_associated_image',...
+        'Provided imageName argument is not a valid associated image name for this openslide object.\n')
 end
 
 % Read size of associated image

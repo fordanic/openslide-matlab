@@ -1,10 +1,10 @@
 function [errorMessage] = openslide_get_error(openslidePointer)
-% OPENSLIDE_GET_ERROR Retrieves an error message related to current slide
+% OPENSLIDE_GET_ERROR Retrieves an error message related to current openslide object
 %
 % [errorMessage] = openslide_get_error(openslidePointer)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to slide to retrieve error for
+% openslidePointer          - Pointer to openslide object to retrieve error for
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A

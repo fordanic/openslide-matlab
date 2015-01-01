@@ -46,22 +46,23 @@ else
 end
 if isempty(which(libName))
     error('openslide:openslide_load_library',...
-        'OpenSlide library not available on MATLAB path\n')
+        [libName,' not available on the MATLAB path\n'])
 end
 
 % Get location of openslide.h
 openslideHeaderLocation = which('openslide.h');
 if isempty(openslideHeaderLocation)
     error('openslide:openslide_load_library',...
-        'OpenSlide include header not available on MATLAB path\n')
+        'openslide.h not available on the MATLAB path\n')
 end
 if ispc
-    % Need to add \ to openslideHeaderLocation when writing to file
+    % Need to add \ to openslideHeaderLocation when writing to file for windows
     openslideHeaderLocation = strrep(openslideHeaderLocation,'\','\\');
 end
 
-% Copy openslide-wrapper.h to openslide-wrapper-local.h and add location of
-% openslide.h
+% Create openslide-wrapper.h add location of openslide.h
+% Wrapper is needed to avoid some issues with MATLAB parsing openslide.h on mac
+% and linux systems
 [pathStr,~,~] = fileparts(mfilename('fullpath'));
 fid = fopen([pathStr,filesep,'openslide-wrapper.h'],'w');
 fprintf(fid,'#ifndef MATLAB_OPENSLIDE_WRAPPER_H\n');
