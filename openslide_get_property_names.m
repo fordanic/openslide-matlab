@@ -46,7 +46,7 @@ end
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_close',errorMessage)
+    error('openslide:openslide_get_property_names',errorMessage)
 end
 
 % Parse the array

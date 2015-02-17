@@ -56,7 +56,7 @@ mppX = str2double(calllib('openslidelib','openslide_get_property_value',...
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_open',errorMessage)
+    error('openslide:openslide_get_slide_properties',errorMessage)
 end
 
 % Read microns per pixel along y-axis
@@ -68,7 +68,7 @@ mppY = str2double(calllib('openslidelib','openslide_get_property_value',...
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_open',errorMessage)
+    error('openslide:openslide_get_slide_properties',errorMessage)
 end
 
 %% size
@@ -83,7 +83,7 @@ height = 0;
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_open',errorMessage)
+    error('openslide:openslide_get_slide_properties',errorMessage)
 end
 
 %% number of zoom levels
@@ -96,7 +96,7 @@ numberOfLevels = calllib('openslidelib','openslide_get_level_count',...
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_open',errorMessage)
+    error('openslide:openslide_get_slide_properties',errorMessage)
 end
 
 %% downsample factors
@@ -112,7 +112,7 @@ end
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_open',errorMessage)
+    error('openslide:openslide_get_slide_properties',errorMessage)
 end
 
 %% objective power
@@ -126,5 +126,5 @@ objectivePower = str2double(calllib('openslidelib',...
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_open',errorMessage)
+    error('openslide:openslide_get_slide_properties',errorMessage)
 end
