@@ -4,8 +4,7 @@ function [ARGB] = openslide_read_region(openslidePointer,xPos,yPos,width,height,
 % [ARGB] = openslide_read_region(openslidePointer,xPos,yPos,width,height)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to whole-slide image to read from, obtained from
-%                             OPENSLIDE_OPEN
+% openslidePointer          - Pointer to openslide object to read from
 % xPos                      - Pixel position, with first position as 0 and in
 %                             the specified level reference frame
 % yPos                      - Pixel position, with first position as 0 and in
