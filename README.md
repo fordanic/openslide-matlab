@@ -5,7 +5,7 @@ A MATLAB library providing bindings to the C library OpenSlide
 (https://github.com/openslide/openslide) used for reading 
 whole-slide images.
 
-Copyright (c) 2014 Daniel Forsberg
+Copyright (c) 2016 Daniel Forsberg
 danne.forsberg@outlook.com
 
 This program is free software: you can redistribute it and/or modify
