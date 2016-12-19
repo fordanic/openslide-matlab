@@ -13,7 +13,7 @@ function [vendor] = openslide_detect_vendor(slideName)
 % OUTPUT
 % vendor            - Vendor of the whole-slide image
 
-% Copyright (c) 2014 Daniel Forsberg
+% Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify

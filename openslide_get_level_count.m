@@ -1,16 +1,16 @@
-function [errorMessage] = openslide_get_error(openslidePointer)
-% OPENSLIDE_GET_ERROR Retrieves an error message related to current openslide object
+function [numberOfLevels] = openslide_get_level_count(openslidePointer)
+% OPENSLIDE_GET_LEVEL_COUNT Determine number of available image levels
 %
-% [errorMessage] = openslide_get_error(openslidePointer)
+% [numberOfLevels] = openslide_get_level_count(openslidePointer)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to openslide object to retrieve error for
+% openslidePointer          - Pointer to openslide object to read from
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% errorMessage              - Retrieved error message, NULL if none is available
+% numberOfLevels            - Number of levels available
 
 % Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
@@ -29,11 +29,20 @@ function [errorMessage] = openslide_get_error(openslidePointer)
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %%
-% Check if openslide library is opened
+% Make sure library for openslide is loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
-% Retrieve error message associated with current slide
-[errorMessage] = calllib('openslidelib','openslide_get_error',openslidePointer);
+% Call get level count
+[numberOfLevels] = calllib('openslidelib','openslide_get_level_count',...
+    openslidePointer);
+
+% Check for errors
+[errorMessage] = openslide_get_error(openslidePointer);
+
+% Terminate if an error was returned
+if ~isempty(errorMessage)
+    error('openslide:openslide_get_level_count',errorMessage)
+end

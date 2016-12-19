@@ -1,16 +1,17 @@
-function [errorMessage] = openslide_get_error(openslidePointer)
-% OPENSLIDE_GET_ERROR Retrieves an error message related to current openslide object
+function [openslideVersion] = openslide_get_version()
+% OPENSLIDE_GET_VERSION Determine version of used openslide library
 %
-% [errorMessage] = openslide_get_error(openslidePointer)
+% [openslideVersion] = openslide_get_version()
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to openslide object to retrieve error for
+% N/a
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% errorMessage              - Retrieved error message, NULL if none is available
+% openslideVersion          - Current openslide library version
+
 
 % Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
@@ -29,11 +30,11 @@ function [errorMessage] = openslide_get_error(openslidePointer)
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %%
-% Check if openslide library is opened
+% Make sure library for openslide is loaded
 if ~libisloaded('openslidelib')
-    error('openslide:openslide_read_region',...
-        'Make sure to load the openslide library first\n')
+    warning('OpenSlide library has not been loaded, attempting to load')
+    openslide_load_library();
 end
 
-% Retrieve error message associated with current slide
-[errorMessage] = calllib('openslidelib','openslide_get_error',openslidePointer);
+% Call get version
+[openslideVersion] = calllib('openslidelib','openslide_get_version');

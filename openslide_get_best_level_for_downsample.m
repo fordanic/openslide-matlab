@@ -1,18 +1,18 @@
-function [associatedImages] = openslide_get_associated_image_names(...
-    openslidePointer)
-% OPENSLIDE_GET_ASSOCIATED_IMAGE_NAMES Returns a list of associated images
+function [level] = openslide_get_best_level_for_downsample(openslidePointer, downsamplingFactor)
+% OPENSLIDE_GET_BEST_LEVEL_FOR_DOWNSAMPLE Determine the most suitable level given a downsampling factor
 %
-% [associatedImages] = openslide_get_associated_image_names(openslidePointer)
+% [level] = openslide_get_best_level_for_downsample(openslidePointer, downsamplingFactor)
 %
 % INPUT ARGUMENTS
-% openslidePointer          - Pointer to the openslide object to read associated 
-%                             image names from
+% openslidePointer          - Pointer to openslide object to read from
+% downsamplingFactor        - Preferred downsampling factor
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% associatedImages          - Cell list with names of associated images
+% level                     - Most suitable level
+
 
 % Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
@@ -31,34 +31,20 @@ function [associatedImages] = openslide_get_associated_image_names(...
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %%
-
-% Check if library for openslide is already loaded
+% Make sure library for openslide is loaded
 if ~libisloaded('openslidelib')
     warning('OpenSlide library has not been loaded, attempting to load')
     openslide_load_library();
 end
 
-% Read list of associated image names
-[stringArray, ~] = calllib('openslidelib','openslide_get_associated_image_names',...
-    openslidePointer);
+% Call get best level for downsample
+[level] = calllib('openslidelib',...
+    'openslide_get__best_level_for_downsample',openslidePointer,downsamplingFactor);
 
 % Check for errors
 [errorMessage] = openslide_get_error(openslidePointer);
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_get_associated_image_names',errorMessage)
-end
-
-% Parse the array
-ptrInd = stringArray;
-ind = 1; 
-
-% Stop at end of list (NULL)
-while ischar(ptrInd.value{1}) 
-    associatedImages{ind} = ptrInd.value{1};
-    % Increment pointer 
-    ptrInd = ptrInd + 1; 
-    % Increment array index
-    ind = ind + 1; 
+    error('openslide:openslide_get_best_level_for_downsample',errorMessage)
 end

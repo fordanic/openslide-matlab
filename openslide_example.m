@@ -1,7 +1,7 @@
-% OPENSLIDE_EXAMPLE An example of how to use the MATLAB bindings in this library
-% for working with whole-slide images
+% OPENSLIDE_EXAMPLE An example of how to use the MATLAB bindings with
+% the OpenSlide library for working with whole-slide images
 
-% Copyright (c) 2014 Daniel Forsberg
+% Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
@@ -17,11 +17,15 @@
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+close all
+
 % Get folder of this file
 [folder,~,~] = fileparts(mfilename('fullpath'));
 
 % Load openslide library
 openslide_load_library();
+
+disp(['OpenSlide version: ',openslide_get_version()])
 
 % Set file name of whole-slide image to work with
 WSI = [folder,filesep,'test_data',filesep,'CMU-1-Small-Region.svs'];
@@ -49,8 +53,9 @@ disp(['objective power: ',num2str(objectivePower)])
 ARGB = openslide_read_region(slidePtr,512,512,1024,1024,0);
 
 % Display RGB part
-figure
+figure(1)
 imshow(ARGB(:,:,2:4))
+set(gcf,'Name','WSI','NumberTitle','off')
 
 % Get property names and display them
 propertyNames = openslide_get_property_names(slidePtr);
@@ -64,12 +69,19 @@ disp(propertyValue)
 associatedImages = openslide_get_associated_image_names(slidePtr);
 disp(associatedImages(:))
 
-% Get label image
-label = openslide_read_associated_image(slidePtr,associatedImages{1});
+% Display all associated images
+for k = 1 : length(associatedImages)
+    disp(['Displaying: ',associatedImages{k}])
+    label = openslide_read_associated_image(slidePtr,associatedImages{k});
 
-% Display label image
-figure
-imshow(label(:,:,2:4))
+    % Display label image
+    figure(1+k)
+    imshow(label(:,:,2:4))
+    set(gcf,'Name',associatedImages{k},'NumberTitle','off')
+    [w,h] = openslide_get_associated_image_dimensions(slidePtr,associatedImages{k});
+    disp(['width: ',num2str(w)])
+    disp(['height: ',num2str(h)])
+end
 
 % Close whole-slide image, note that the slidePtr must be removed manually
 openslide_close(slidePtr)

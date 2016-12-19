@@ -19,7 +19,7 @@ function [ARGB] = openslide_read_region(openslidePointer,xPos,yPos,width,height,
 % OUTPUT
 % ARGB                      - Read ARGB image
 
-% Copyright (c) 2013 Daniel Forsberg
+% Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
@@ -51,18 +51,14 @@ if ~libisloaded('openslidelib')
 end
 
 % Check that specified level is available
-numberOfLevels = calllib('openslidelib','openslide_get_level_count',...
-    openslidePointer);
+numberOfLevels = openslide_get_level_count(openslidePointer);
 if level >= numberOfLevels
     error('openslide:openslide_read_region',...
         'Specified level is not available in the current whole-slide image\n')
 end
 
 % Check that it is possible to read the specified region
-widthLevel = 0;
-heightLevel = 0;
-[~, widthLevel, heightLevel] = calllib('openslidelib',...
-    'openslide_get_level_dimensions',openslidePointer,level,widthLevel,heightLevel);
+[widthLevel, heightLevel] = openslide_get_level_dimensions(openslidePointer,level);
 
 if xPos + width - 1 >= widthLevel
     error('openslide:openslide_read_region',...
@@ -82,8 +78,7 @@ if yPos < 0
 end
 
 % Adjust position according to downsampling factor of desired level
-downsamplingFactor = calllib('openslidelib',...
-    'openslide_get_level_downsample',openslidePointer,level);
+downsamplingFactor = openslide_get_level_downsample(openslidePointer,level);
 xPos = xPos * downsamplingFactor;
 yPos = yPos * downsamplingFactor;
     

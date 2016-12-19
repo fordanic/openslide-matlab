@@ -1,17 +1,18 @@
-function [ARGB] = openslide_read_associated_image(openslidePointer,imageName)
-% OPENSLIDE_READ_ASSOCIATED_IMAGE Reads an associated image
+function [width, height] = openslide_get_associated_image_dimensions(openslidePointer,imageName)
+% OPENSLIDE_GET_ASSOCIATED_IMAGE_DIMENSIONS Gets the dimensions of the associated image
 %
-% [ARGB] = openslide_read_associated_image(openslidePointer,imageName)
+% [width, height] = openslide_get_associated_image_dimensions(openslidePointer,imageName)
 %
 % INPUT ARGUMENTS
 % openslidePointer          - Pointer to openslide object to read from
-% imageName                 - Associated image name to read
+% imageName                 - Associated image name to read from
 %
 % OPTIONAL INPUT ARGUMENTS
 % N/A
 %
 % OUTPUT
-% ARGB                      - Read ARGB image
+% width                     - Image width
+% height                    - Image Height
 
 % Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
@@ -44,41 +45,28 @@ if iscell(imageName)
     imageName = imageName{1};
 end
 if ~ischar(imageName)
-    error('openslide:openslide_read_associated_image',...
+    error('openslide:openslide_get_associated_image_dimensions',...
         'Provided imageName argument is not a valid char array.\n')
 end
 
 % See if provided image name is in the list of available associated images
 imageNames = openslide_get_associated_image_names(openslidePointer);
 if sum(strcmpi(imageName,imageNames)) == 0
-    error('openslide:openslide_read_associated_image',...
+    error('openslide:openslide_get_associated_image_dimensions',...
         'Provided imageName argument is not a valid associated image name for this openslide object.\n')
 end
 
 % Read size of associated image
-[width, height] = openslide_get_associated_image_dimensions(openslidePointer,imageName);
+width = 0;
+height = 0;
+[~, ~, width, height] = calllib('openslidelib',...
+    'openslide_get_associated_image_dimensions',openslidePointer,imageName,...
+    width,height);
     
-% Read image
-data = uint32(zeros(width*height,1));
-region = libpointer('uint32Ptr',data);
-[~, ~, region] = calllib('openslidelib',...
-    'openslide_read_associated_image',openslidePointer,imageName,region);
-
 % Check for errors
 [errorMessage] = openslide_get_error(openslidePointer);
 
 % Terminate if an error was returned
 if ~isempty(errorMessage)
-    error('openslide:openslide_read_associated_image',errorMessage)
+    error('openslide:openslide_get_associated_image_dimensions',errorMessage)
 end
-
-% Cast and reformat read data
-RGBA = typecast(region,'uint8');
-ARGB = uint8(zeros(width,height,4));
-ARGB(:,:,1) = reshape(RGBA(4:4:end),width,height);
-ARGB(:,:,2) = reshape(RGBA(3:4:end),width,height);
-ARGB(:,:,3) = reshape(RGBA(2:4:end),width,height);
-ARGB(:,:,4) = reshape(RGBA(1:4:end),width,height);
-
-% Permute image to make sure it is according to standard MATLAB format
-ARGB = permute(ARGB,[2 1 3]);

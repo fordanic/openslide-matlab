@@ -13,7 +13,7 @@ function [propertyNames] = ...
 % OUTPUT
 % propertyNames             - Cell list with all avaiable property names
 
-% Copyright (c) 2013 Daniel Forsberg
+% Copyright (c) 2016 Daniel Forsberg
 % danne.forsberg@outlook.com
 %
 % This program is free software: you can redistribute it and/or modify
