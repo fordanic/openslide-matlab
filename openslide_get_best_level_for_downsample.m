@@ -39,7 +39,7 @@ end
 
 % Call get best level for downsample
 [level] = calllib('openslidelib',...
-    'openslide_get__best_level_for_downsample',openslidePointer,downsamplingFactor);
+    'openslide_get_best_level_for_downsample',openslidePointer,downsamplingFactor);
 
 % Check for errors
 [errorMessage] = openslide_get_error(openslidePointer);
